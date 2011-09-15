@@ -1,4 +1,10 @@
 MLDS::Application.routes.draw do
+  resources :sessions, :only => [:new , :create , :destroy]
+
+  resources :macroposts
+
+  resources :users
+
   # leave room here for future resources
   
   # routing the pages
@@ -7,6 +13,10 @@ MLDS::Application.routes.draw do
   match '/partners' , :to => 'pages#partners'
   match '/projects' , :to => 'pages#projects'
 
+  match '/signup' , :to => 'users#new'
+
+  match '/signin' , :to => 'sessions#new'
+  match '/signout' , :to => 'sessions#destroy'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
