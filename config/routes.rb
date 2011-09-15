@@ -1,4 +1,12 @@
 MLDS::Application.routes.draw do
+  # leave room here for future resources
+  
+  # routing the pages
+  match '/contact' , :to => 'pages#contact'
+  match '/about' , :to => 'pages#about'
+  match '/partners' , :to => 'pages#partners'
+  match '/projects' , :to => 'pages#projects'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -49,6 +57,7 @@ MLDS::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   # root :to => "welcome#index"
+  root :to => "pages#home"
 
   # See how all your routes lay out with "rake routes"
 
