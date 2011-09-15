@@ -7,6 +7,8 @@
 body
 {
   background: #cff;
+  background-image: url('../images/bggradient.png');
+  background-repeat: repeat-x;
 }
 
 header
@@ -95,10 +97,10 @@ a.signup_button {
   margin-right: auto;
   display: block;
   text-align: center;
-  width: 190px;
+  width: 290px;
   color: #fff;
   background: #006400;
-  font-size: 150%;
+  font-size: 125%;
   font-weight: bold;
   padding: 20px;
 }
@@ -195,7 +197,12 @@ div.field, div.actions {
   list-style: square;
 }
 
-
+/* Front page large logo*/
+div.largelogo {
+  margin-top: -20px;
+  margin-right: -20px;
+  padding-left: 30px
+}
 
 
 

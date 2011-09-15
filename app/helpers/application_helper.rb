@@ -31,10 +31,12 @@ module ApplicationHelper
   end
   
   def pic_scroll
-    image_tag( "largelogo.png" , :alt => "Moonlight Dreamscape large logo", :class => "round" )
+    outside_link = 'http://i299.photobucket.com/albums/mm281/foxnewsnetwork/largelogo-1.png'
+    image_tag( outside_link , :alt => "Moonlight Dreamscape large logo", :class => "round" )
   end
   
   def logo
-    image_tag( "logo.png", :alt => "Moonlight Dreamscape logo", :class => "round" )
+    outside_link = 'http://i299.photobucket.com/albums/mm281/foxnewsnetwork/logo.png'
+    image_tag( outside_link, :alt => "Moonlight Dreamscape logo", :class => "round" )
   end
 end
