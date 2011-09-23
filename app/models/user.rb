@@ -1,12 +1,12 @@
 require 'digest'
-
 class User < ActiveRecord::Base
-  has_many :macroposts
-  attr_accessor :password , :status
-  attr_accessible :name, :email , :password , :password_confirmation
+  attr_accessor :password
+  attr_accessible :username, :email , :password , :password_confirmation
+  
+  has_many :macroposts, :dependent => :destroy, :order => 'created_at DESC'
   
   email_regex = /\A[a-zA-Z0-9_.-]{1,}@[a-zA-Z0-9_.-]{1,}\.[a-zA-Z]{2,}\z/i
-  validates :name , :presence => true ,
+  validates :username , :presence => true ,
                         :length => { :maximum => 64 }
                         
   validates :email , :presence => true ,
@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
                         :length => { :within => 4..128 }
                         
   before_save :encrypt_password
+  
+  def feed
+    Macropost.where("user_id = ?", id).order("created_at DESC")
+  end
   
   def has_password?(submitted_password)
     return self.encrypted_password == encrypt(submitted_password)
@@ -52,4 +56,5 @@ class User < ActiveRecord::Base
     def secure_hash(string)
       return Digest::SHA2.hexdigest(string)
     end
+
 end

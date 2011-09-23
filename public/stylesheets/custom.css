@@ -6,7 +6,7 @@
 
 body
 {
-  background: #cff;
+  background: #14879f;
   background-image: url('../images/bggradient.png');
   background-repeat: repeat-x;
 }
@@ -197,14 +197,89 @@ div.field, div.actions {
   list-style: square;
 }
 
+/* for user displays */
+ul.users {
+  margin-top: 1em;
+}
+
+.users li {
+  list-style: none;
+}
+
+/* macropost styles */
+
+h1.macropost {
+  margin-bottom: 0.3em;
+}
+
+table.macroposts {
+  margin-top: 1em;
+}
+
+table.macroposts tr {
+  height: 70px;
+}
+
+table.macroposts tr td.gravatar {
+  border-top: 1px solid #ccc;
+  vertical-align: top;
+  width: 50px;
+}
+
+table.macroposts tr td.macropost {
+  border-top: 1px solid #ccc;
+  vertical-align: top;
+  padding-top: 10px;
+}
+
+table.macroposts tr td.macropost span.timestamp {
+  display: block;
+  font-size: 85%;
+  color: #666;
+}
+
+table.macroposts tr td.macropost span.title {
+  color: #848;
+  display: block;
+  font-size: 115%;
+}
+
+table.macroposts tr td.macropost span.location {
+  color: #666;
+  display: block;
+  font-size: 85%;
+}
+
+div.user_info img {
+  padding-right: 0.1em;
+}
+
+div.user_info a {
+  text-decoration: none;
+}
+
+div.user_info span.user_name {
+  position: absolute;
+}
+
+div.user_info span.macroposts {
+  font-size: 80%;
+}
+
+form.new_macropost {
+  margin-bottom: 2em;
+}
+
+form.new_macropost textarea {
+  height: 4em;
+  margin-bottom: 0;
+}
+
 /* Front page large logo*/
 div.largelogo {
   margin-top: -20px;
   margin-right: -20px;
   padding-left: 30px
 }
-
-
-
 
 

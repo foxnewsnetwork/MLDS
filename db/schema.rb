@@ -11,29 +11,31 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110915050016) do
+ActiveRecord::Schema.define(:version => 20110916185519) do
 
   create_table "macroposts", :force => true do |t|
-    t.string   "title"
-    t.string   "content"
+    t.text     "content"
     t.integer  "user_id"
-    t.string   "location"
+    t.integer  "location_id"
+    t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "macroposts", ["created_at"], :name => "index_macroposts_on_created_at"
-  add_index "macroposts", ["location"], :name => "index_macroposts_on_location"
+  add_index "macroposts", ["location_id"], :name => "index_macroposts_on_location_id"
   add_index "macroposts", ["user_id"], :name => "index_macroposts_on_user_id"
 
   create_table "users", :force => true do |t|
-    t.string   "name"
+    t.string   "username"
     t.string   "email"
-    t.integer  "status"
-    t.string   "password"
-    t.string   "salt"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "encrypted_password"
+    t.string   "salt"
+    t.boolean  "admin",              :default => false
   end
+
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
 
 end

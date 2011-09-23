@@ -1,83 +1,83 @@
 class UsersController < ApplicationController
-  # GET /users
-  # GET /users.xml
+  before_filter :authenticate, :only => [:edit, :update, :index] 
+  before_filter :correct_user, :only => [:edit, :update ]
+  before_filter :admin_user, :only => :destroy
+  before_filter :logged_in_user , :only => [:new, :create]
+  
+  def destroy
+    targetuser = User.find_by_id(params[:id])
+    if current_user.id == targetuser.id
+      flash[:error] = "Admins cannot delete themselves"
+    else
+      flash[:success] = "User destroyed"
+      targetuser.destroy
+    end
+    redirect_to users_path
+  end
+  
   def index
-    @users = User.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @users }
+    @title = "All users"
+    @users = User.paginate(:page => params[:page], :per_page => 30)
+  end
+  
+  def edit
+    @title = "Edit user"
+  end
+  
+  def update
+    @user = User.find_by_id(params[:id])
+    if @user.update_attributes(params[:user])
+      flash[:success] = "Profile updated"
+      redirect_to @user
+    else
+      @title = "Edit user"
+      render 'edit'
     end
   end
-
-  # GET /users/1
-  # GET /users/1.xml
-  def show
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @user }
-    end
-  end
-
-  # GET /users/new
-  # GET /users/new.xml
+  
   def new
     @user = User.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @user }
-    end
+    @title = "Sign up"
   end
-
-  # GET /users/1/edit
-  def edit
+  
+  def show
     @user = User.find(params[:id])
+    @macroposts = @user.macroposts.paginate(:page => params[:page], :per_page => 10)
+    @title = @user.username
   end
 
-  # POST /users
-  # POST /users.xml
   def create
     @user = User.new(params[:user])
-
-    respond_to do |format|
       if @user.save
-        format.html { redirect_to(@user, :notice => 'User was successfully created.') }
-        format.xml  { render :xml => @user, :status => :created, :location => @user }
+        flash[:success] = "Welcome!"
+        sign_in(@user)
+        redirect_to @user
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+        @title = "Sign up"
+        @user.password = ''
+        @user.password_confirmation = '' 
+        render 'new'
+      end
+  end
+  
+  private
+    
+    
+    
+    def correct_user
+      @user = User.find_by_id(params[:id])
+      redirect_to(root_path) unless current_user?(@user)
+    end
+    
+    def admin_user
+      if not signed_in?
+        deny_access
+      else
+        redirect_to(root_path) unless current_user.admin?
       end
     end
-  end
-
-  # PUT /users/1
-  # PUT /users/1.xml
-  def update
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      if @user.update_attributes(params[:user])
-        format.html { redirect_to(@user, :notice => 'User was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
-      end
+    
+    def logged_in_user
+      redirect_to(root_path) if signed_in?
     end
-  end
-
-  # DELETE /users/1
-  # DELETE /users/1.xml
-  def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(users_url) }
-      format.xml  { head :ok }
-    end
-  end
 end

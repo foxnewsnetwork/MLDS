@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-MLDS::Application.config.secret_token = '5ccf58250199794912ca1adca36670e04175217043238a88c1440a599b752c5cd408b068e29b6843f91b4fec757ca367911fd0eeb6c6adc862496f45e62b75c9'
+SampleApp::Application.config.secret_token = 'bb7b733694a294224ec90590fa204bae5429d50161fb68ca6339a615b587aa996bab0465b2e092c4e988a707aff32157ddb71bdecef30f16adbccfa21c2dc0da'

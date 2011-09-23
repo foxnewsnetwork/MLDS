@@ -1,127 +1,111 @@
 require 'spec_helper'
+require 'factories'
 
 describe MacropostsController do
-
-  def mock_macropost(stubs={})
-    (@mock_macropost ||= mock_model(Macropost).as_null_object).tap do |macropost|
-      macropost.stub(stubs) unless stubs.empty?
-    end
-  end
-
-  describe "GET index" do
-    it "assigns all macroposts as @macroposts" do
-      Macropost.stub(:all) { [mock_macropost] }
-      get :index
-      assigns(:macroposts).should eq([mock_macropost])
-    end
-  end
-
-  describe "GET show" do
-    it "assigns the requested macropost as @macropost" do
-      Macropost.stub(:find).with("37") { mock_macropost }
-      get :show, :id => "37"
-      assigns(:macropost).should be(mock_macropost)
-    end
-  end
-
-  describe "GET new" do
-    it "assigns a new macropost as @macropost" do
-      Macropost.stub(:new) { mock_macropost }
-      get :new
-      assigns(:macropost).should be(mock_macropost)
-    end
-  end
-
-  describe "GET edit" do
-    it "assigns the requested macropost as @macropost" do
-      Macropost.stub(:find).with("37") { mock_macropost }
-      get :edit, :id => "37"
-      assigns(:macropost).should be(mock_macropost)
-    end
-  end
-
-  describe "POST create" do
-
-    describe "with valid params" do
-      it "assigns a newly created macropost as @macropost" do
-        Macropost.stub(:new).with({'these' => 'params'}) { mock_macropost(:save => true) }
-        post :create, :macropost => {'these' => 'params'}
-        assigns(:macropost).should be(mock_macropost)
+    render_views
+    
+    describe "access control" do
+      
+      describe "failure for non-signed-in users" do
+        
+        it "should deny access to create" do
+          post :create
+          response.should redirect_to(signin_path)
+        end
+        
+        it "should deny access to destroy" do
+          delete :destroy, :id => 1
+          response.should redirect_to(signin_path)
+        end
       end
-
-      it "redirects to the created macropost" do
-        Macropost.stub(:new) { mock_macropost(:save => true) }
-        post :create, :macropost => {}
-        response.should redirect_to(macropost_url(mock_macropost))
+      
+    end
+    
+    describe "DELETE 'destroy'" do
+      
+      describe "for an unauthorized user" do
+        
+        before(:each) do
+          @user = Factory(:user)
+          wrong_user = Factory(:user, :email => Factory.next(:email))
+          test_sign_in(wrong_user)
+          @macropost = Factory(:macropost, :user => @user)
+        end
+        
+        it "should deny access" do
+          delete :destroy, :id => @macropost
+          response.should redirect_to(root_path)
+        end
+      end
+      
+      describe "for an authorized user" do
+        
+        before(:each) do
+          @user2 = test_sign_in(Factory(:user))
+          @macropost = Factory(:macropost, :user => @user2)
+        end
+        
+        it "should destroy the macroposts" do
+          lambda do
+            delete :destroy, :id => @macropost.id
+          end.should change(Macropost, :count).by(-1)
+        end
       end
     end
-
-    describe "with invalid params" do
-      it "assigns a newly created but unsaved macropost as @macropost" do
-        Macropost.stub(:new).with({'these' => 'params'}) { mock_macropost(:save => false) }
-        post :create, :macropost => {'these' => 'params'}
-        assigns(:macropost).should be(mock_macropost)
+    
+    describe "POST 'create'" do
+    
+      before(:each) do
+        @user = test_sign_in(Factory(:user))
       end
-
-      it "re-renders the 'new' template" do
-        Macropost.stub(:new) { mock_macropost(:save => false) }
-        post :create, :macropost => {}
-        response.should render_template("new")
+      
+      describe "failure cases" do
+        
+        before(:each) do
+          @attr = { :content => '' , :title => '', :location_id => 1 }
+        end
+        
+        it "should not create a macropost" do
+          lambda do
+            post :create, :macropost => @attr
+          end.should_not change(Macropost, :count)
+        end
+        
+        it "should render the home page" do
+          post :create, :macropost => @attr
+          response.should redirect_to('pages/home')
+        end
+        
+        
       end
+      
+      describe "success cases" do
+        
+        before(:each) do
+          @attr = { 
+                  :content => 'lorem ipsum' ,
+                  :title => 'title here' ,
+                  :location_id => 1
+                  }
+        end
+        
+        it "should create a macropost" do
+          lambda do
+            post :create, :macropost => @attr
+          end.should change(Macropost, :count).by(1)
+        end
+        
+        it "should redirect to the home page" do
+          post :create, :macropost => @attr
+          response.should redirect_to(root_path) 
+        end
+        
+        it "should display the correct flash message" do
+          post :create, :macropost => @attr
+          flash[:success].should =~ /created/i
+        end
+        
+      end
+      
     end
-
-  end
-
-  describe "PUT update" do
-
-    describe "with valid params" do
-      it "updates the requested macropost" do
-        Macropost.should_receive(:find).with("37") { mock_macropost }
-        mock_macropost.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, :id => "37", :macropost => {'these' => 'params'}
-      end
-
-      it "assigns the requested macropost as @macropost" do
-        Macropost.stub(:find) { mock_macropost(:update_attributes => true) }
-        put :update, :id => "1"
-        assigns(:macropost).should be(mock_macropost)
-      end
-
-      it "redirects to the macropost" do
-        Macropost.stub(:find) { mock_macropost(:update_attributes => true) }
-        put :update, :id => "1"
-        response.should redirect_to(macropost_url(mock_macropost))
-      end
-    end
-
-    describe "with invalid params" do
-      it "assigns the macropost as @macropost" do
-        Macropost.stub(:find) { mock_macropost(:update_attributes => false) }
-        put :update, :id => "1"
-        assigns(:macropost).should be(mock_macropost)
-      end
-
-      it "re-renders the 'edit' template" do
-        Macropost.stub(:find) { mock_macropost(:update_attributes => false) }
-        put :update, :id => "1"
-        response.should render_template("edit")
-      end
-    end
-
-  end
-
-  describe "DELETE destroy" do
-    it "destroys the requested macropost" do
-      Macropost.should_receive(:find).with("37") { mock_macropost }
-      mock_macropost.should_receive(:destroy)
-      delete :destroy, :id => "37"
-    end
-
-    it "redirects to the macroposts list" do
-      Macropost.stub(:find) { mock_macropost }
-      delete :destroy, :id => "1"
-      response.should redirect_to(macroposts_url)
-    end
-  end
-
 end
